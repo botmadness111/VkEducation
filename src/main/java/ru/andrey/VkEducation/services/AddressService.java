@@ -1,7 +1,6 @@
-package ru.andrey.VkEducation.services.dataBase;
+package ru.andrey.VkEducation.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.andrey.VkEducation.models.user.dependencies.Address;

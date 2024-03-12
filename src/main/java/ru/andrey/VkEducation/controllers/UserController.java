@@ -8,10 +8,10 @@ import ru.andrey.VkEducation.models.user.User;
 import ru.andrey.VkEducation.models.user.dependencies.Address;
 import ru.andrey.VkEducation.models.user.dependencies.Company;
 import ru.andrey.VkEducation.models.user.dependencies.Geo;
-import ru.andrey.VkEducation.services.dataBase.AddressService;
-import ru.andrey.VkEducation.services.dataBase.CompanyService;
-import ru.andrey.VkEducation.services.dataBase.GeoService;
-import ru.andrey.VkEducation.services.dataBase.UserService;
+import ru.andrey.VkEducation.services.AddressService;
+import ru.andrey.VkEducation.services.CompanyService;
+import ru.andrey.VkEducation.services.GeoService;
+import ru.andrey.VkEducation.services.UserService;
 
 import java.io.IOException;
 
@@ -59,17 +59,17 @@ public class UserController {
         return user;
     }
 
-    @PostMapping("")
+    @PostMapping()
     public String createPost(@RequestBody String requestBody) throws IOException {
         return proxyService.forwardRequestWithBody("/posts", "POST", requestBody);
     }
 
-    @PutMapping("")
+    @PutMapping()
     public String putPost(@RequestBody String requestBody) throws IOException {
         return proxyService.forwardRequestWithBody("/posts", "PUT", requestBody);
     }
 
-    @DeleteMapping("")
+    @DeleteMapping()
     public String deletePost(@RequestBody String requestBody) throws IOException {
         return proxyService.forwardRequestWithBody("/posts", "DELETE", requestBody);
     }

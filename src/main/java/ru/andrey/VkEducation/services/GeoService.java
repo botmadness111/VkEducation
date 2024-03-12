@@ -1,4 +1,4 @@
-package ru.andrey.VkEducation.services.dataBase;
+package ru.andrey.VkEducation.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
