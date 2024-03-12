@@ -25,6 +25,5 @@ public class Post {
 
     @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-//    @JsonManagedReference // Эта аннотация предотвратит рекурсию при сериализации в JSON
     private User user;
 }

@@ -7,6 +7,7 @@ import ru.andrey.VkEducation.controllers.Proxy.ProxyService;
 import java.io.IOException;
 
 @RestController
+@RequestMapping("/api/posts")
 public class PostController {
     private final ProxyService proxyService;
 
@@ -17,27 +18,28 @@ public class PostController {
 
     @GetMapping("/api/posts")
     public String getPost() throws IOException {
-        return proxyService.forwardRequest("/posts");
+        return proxyService.forwardRequestGet("/posts", "posts");
     }
 
-    @GetMapping("/api/posts/{id}")
+    @GetMapping()
     public String getPost(@PathVariable String id) throws IOException {
-        return proxyService.forwardRequest("/posts/" + id);
+        String response = proxyService.forwardRequestWithIdGet("/posts/" + id, "post", id);
+        return response;
     }
 
-    @PostMapping("/api/posts")
+    @PostMapping()
     public String createPost(@RequestBody String requestBody) throws IOException {
-        return proxyService.forwardRequestWithBody("/posts", "POST", requestBody);
+        return proxyService.forwardRequestWithBodyPost("/posts/", "post", requestBody);
     }
 
-    @PutMapping("/api/posts")
-    public String putPost(@RequestBody String requestBody) throws IOException {
-        return proxyService.forwardRequestWithBody("/posts", "PUT", requestBody);
+    @PutMapping("/{id}")
+    public String putPost(@PathVariable String id, @RequestBody String requestBody) throws IOException {
+        return proxyService.forwardRequestWithBodyPut("/posts/" + id, "post", id, requestBody);
     }
 
-    @DeleteMapping("/api/posts")
-    public String deletePost(@RequestBody String requestBody) throws IOException {
-        return proxyService.forwardRequestWithBody("/posts", "DELETE", requestBody);
+    @DeleteMapping("/{id}")
+    public String deletePost(@PathVariable String id, @RequestBody String requestBody) throws IOException {
+        return proxyService.forwardRequestWithBodyDelete("/posts/" + id, "post", id, requestBody);
     }
 
 

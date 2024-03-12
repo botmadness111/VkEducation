@@ -37,41 +37,43 @@ public class UserController {
 
     @GetMapping()
     public String getPost() throws IOException {
-        return proxyService.forwardRequest("/posts");
+        return proxyService.forwardRequestGet("/users", "users");
     }
 
     @GetMapping("/{id}")
     public User getPost(@PathVariable String id) throws IOException {
-        String response = proxyService.forwardRequest("/users/" + id);
+        String response = proxyService.forwardRequestWithIdGet("/users/" + id, "user", id);
+
+        if (response == null || response.isEmpty()) return null;
+//
         User user = objectMapper.readValue(response, User.class);
-
-        Company company = user.getCompany();
-        Address address = user.getAddress();
-        Geo geo = address.getGeo();
-
-
-        geoService.save(geo);
-        addressService.save(address);
-        companyService.save(company);
-
-        userService.save(user);
+//
+//        Company company = user.getCompany();
+//        Address address = user.getAddress();
+//        Geo geo = address.getGeo();
+//
+//        geoService.save(geo);
+//        addressService.save(address);
+//        companyService.save(company);
+//
+//        userService.save(user);
 
         return user;
     }
 
     @PostMapping()
     public String createPost(@RequestBody String requestBody) throws IOException {
-        return proxyService.forwardRequestWithBody("/posts", "POST", requestBody);
+        return proxyService.forwardRequestWithBodyPost("/users/", "user", requestBody);
     }
 
-    @PutMapping()
-    public String putPost(@RequestBody String requestBody) throws IOException {
-        return proxyService.forwardRequestWithBody("/posts", "PUT", requestBody);
+    @PutMapping("/{id}")
+    public String putPost(@PathVariable String id, @RequestBody String requestBody) throws IOException {
+        return proxyService.forwardRequestWithBodyPut("/users/" + id, "user", id, requestBody);
     }
 
-    @DeleteMapping()
-    public String deletePost(@RequestBody String requestBody) throws IOException {
-        return proxyService.forwardRequestWithBody("/posts", "DELETE", requestBody);
+    @DeleteMapping("/{id}")
+    public String deletePost(@PathVariable String id, @RequestBody String requestBody) throws IOException {
+        return proxyService.forwardRequestWithBodyDelete("/users/" + id, "user", id, requestBody);
     }
 
 }

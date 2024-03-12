@@ -1,42 +1,52 @@
 package ru.andrey.VkEducation.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.andrey.VkEducation.controllers.Proxy.ProxyService;
+import ru.andrey.VkEducation.models.album.Album;
 
 import java.io.IOException;
 
 @RestController
+@RequestMapping("/api/albums")
 public class AlbumsController {
     private final ProxyService proxyService;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public AlbumsController(ProxyService proxyService) {
+    public AlbumsController(ProxyService proxyService, ObjectMapper objectMapper) {
         this.proxyService = proxyService;
+        this.objectMapper = objectMapper;
     }
 
-    @GetMapping("/api/albums")
+    @GetMapping()
     public String getPost() throws IOException {
-        return proxyService.forwardRequest("/albums");
+        return proxyService.forwardRequestGet("/albums", "albums");
     }
 
-    @GetMapping("/api/albums/{id}")
-    public String getPost(@PathVariable String id) throws IOException {
-        return proxyService.forwardRequest("/albums/" + id);
+    @GetMapping("/{id}")
+    public Album getPost(@PathVariable String id) throws IOException {
+        String response = proxyService.forwardRequestWithIdGet("/albums/" + id, "album", id);
+        if (response == null || response.isEmpty()) return null;
+//
+        Album album = objectMapper.readValue(response, Album.class);
+
+        return album;
     }
 
-    @PostMapping("/api/albums")
+    @PostMapping()
     public String createPost(@RequestBody String requestBody) throws IOException {
-        return proxyService.forwardRequestWithBody("/albums", "POST", requestBody);
+        return proxyService.forwardRequestWithBodyPost("/albums/", "album", requestBody);
     }
 
-    @PutMapping("/api/albums")
-    public String putPost(@RequestBody String requestBody) throws IOException {
-        return proxyService.forwardRequestWithBody("/albums", "PUT", requestBody);
+    @PutMapping("/{id}")
+    public String putPost(@PathVariable String id, @RequestBody String requestBody) throws IOException {
+        return proxyService.forwardRequestWithBodyPut("/albums/" + id, "album", id, requestBody);
     }
 
-    @DeleteMapping("/api/albums")
-    public String deletePost(@RequestBody String requestBody) throws IOException {
-        return proxyService.forwardRequestWithBody("/albums", "DELETE", requestBody);
+    @DeleteMapping("/{id}")
+    public String deletePost(@PathVariable String id, @RequestBody String requestBody) throws IOException {
+        return proxyService.forwardRequestWithBodyDelete("/albums/" + id, "album", id, requestBody);
     }
 }
