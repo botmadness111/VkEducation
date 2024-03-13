@@ -1,5 +1,8 @@
 package ru.andrey.VkEducation.controllers.Proxy;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -68,7 +71,11 @@ public class ProxyService {
         try (Response response = client.newCall(request).execute()) {
             String responseString = response.body().string();
 
-            if (response.isSuccessful()) {
+            if (response.code() == 200) {
+                JSONObject jsonObject = new JSONObject(responseString);
+                jsonObject.put("id", Integer.parseInt(id));
+                responseString = jsonObject.toString();
+
                 jedis.set(jedisKey, responseString);
                 cacheTimer.keyCreatedOrAccessed(jedisKey);
             }
@@ -78,7 +85,9 @@ public class ProxyService {
     }
 
 
-    public String forwardRequestWithBodyPost(String url, String entity, String requestBody) throws IOException {
+    public String forwardRequestWithBodyPost(String url, String entity, String id, String requestBody) throws IOException {
+
+//        String id = "11"; //"11" - возвращается из json
 
         Request request = new Request.Builder()
                 .url(domain + url)
@@ -86,16 +95,19 @@ public class ProxyService {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            String responseBody = response.body().string();
 
             if (response.code() == 201) {
-                JSONObject jsonResponse = new JSONObject(responseBody);
-                String id = String.valueOf(jsonResponse.get("id"));
-
                 updateAll(entity + "s", id);
-            }
 
-            return responseBody;
+                JSONObject jsonObject = new JSONObject(requestBody);
+                jsonObject.put("id", Integer.parseInt(id));
+                requestBody = jsonObject.toString();
+
+                jedis.set(entity + id, requestBody);
+
+
+            }
+            return requestBody;
         }
     }
 
@@ -108,26 +120,34 @@ public class ProxyService {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            String resposeString = response.body().string();
 
-            if (response.isSuccessful()) {
+            if (response.code() == 200) {
 
-                if (jedis.exists(jedisKey)){
-                    jedis.set(jedisKey, requestBody);
-                    updateAll(entity + "s", id);
+                if (!jedis.exists(jedisKey)) forwardRequestWithIdGet(url, entity, id);
+                if (jedis.get(jedisKey).isEmpty()) throw new RuntimeException("The object has been deleted");
+                JSONObject userObject = new JSONObject(jedis.get(jedisKey));
+                JSONObject updatedObject = new JSONObject(requestBody);
+
+                for (String key : updatedObject.keySet()) {
+                    if (updatedObject.get(key) != null) userObject.put(key, updatedObject.get(key));
                 }
+
+                jedis.set(jedisKey, userObject.toString());
+                updateAll(entity + "s", id);
+
+                return userObject.toString();
             }
 
-            return resposeString;
+            return null;
         }
     }
 
-    public String forwardRequestWithBodyDelete(String url, String entity, String id, String requestBody) throws IOException {
+    public String forwardRequestWithBodyDelete(String url, String entity, String id) throws IOException {
         String jedisKey = entity + id;
 
         Request request = new Request.Builder()
                 .url(domain + url)
-                .delete(okhttp3.RequestBody.create(requestBody, null))
+                .delete(okhttp3.RequestBody.create("", null))
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
@@ -152,7 +172,7 @@ public class ProxyService {
 
         JSONArray usersArray = new JSONArray(usersData);
 
-
+        Boolean flag = true;
         for (int i = 0; i < usersArray.length(); i++) {
             JSONObject userObject = usersArray.getJSONObject(i);
 
@@ -160,6 +180,7 @@ public class ProxyService {
             String userId = String.valueOf(userObject.get("id"));
 
             if (userId.equals(id)) {
+                flag = false;
                 String jedisKey = entity.substring(0, entity.length() - 1) + id;
 
                 String jsonUpdated = jedis.get(jedisKey);
@@ -170,12 +191,24 @@ public class ProxyService {
                     JSONObject updatedObject = new JSONObject(jsonUpdated);
 
                     for (String key : updatedObject.keySet()) {
-                        userObject.put(key, updatedObject.get(key));
+                        if (updatedObject.get(key) != null) userObject.put(key, updatedObject.get(key));
                     }
                 }
 
                 break;
             }
+        }
+
+        if (flag) {
+
+            String jedisKey = entity.substring(0, entity.length() - 1) + id;
+
+            String jsonUpdated = jedis.get(jedisKey);
+
+            JSONObject updatedObject = new JSONObject(jsonUpdated);
+            updatedObject.put("id", Integer.parseInt(id));
+
+            usersArray.put(updatedObject);
         }
 
         String updatedUsersData = usersArray.toString();

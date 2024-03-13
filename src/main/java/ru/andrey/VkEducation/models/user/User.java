@@ -12,6 +12,7 @@ import ru.andrey.VkEducation.models.post.Post;
 import ru.andrey.VkEducation.models.user.dependencies.Address;
 import ru.andrey.VkEducation.models.user.dependencies.Company;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -24,6 +25,9 @@ public class User {
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(name="id_vk")
+    @JsonIgnore
+    private Integer id_vk;
     @Column(name="username")
     private String username;
     @Column(name="email")
@@ -52,5 +56,11 @@ public class User {
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @JsonIgnore
     List<Post> posts;
+
+    public void addPost(Post post){
+        if (posts == null) posts = new ArrayList<>();
+
+        posts.add(post);
+    }
 
 }

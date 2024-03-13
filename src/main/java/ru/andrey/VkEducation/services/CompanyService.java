@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.andrey.VkEducation.models.user.dependencies.Company;
 import ru.andrey.VkEducation.repositories.CompanyRepository;
 
+import java.util.Optional;
+
 @Service
 @Transactional(readOnly = true)
 public class CompanyService {
@@ -17,7 +19,14 @@ public class CompanyService {
     }
 
     @Transactional
-    public void save(Company company){
-        companyRepository.save(company);
+    public Optional<Company> save(Company company) {
+        Optional<Company> companyOptional = companyRepository.findByName(company.getName());
+        if (companyOptional.isEmpty()) {
+            companyRepository.save(company);
+            companyOptional = Optional.of(company);
+        }
+
+
+        return companyOptional;
     }
 }

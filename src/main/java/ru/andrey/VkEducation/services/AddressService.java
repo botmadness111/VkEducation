@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.andrey.VkEducation.models.user.dependencies.Address;
 import ru.andrey.VkEducation.repositories.AddressRepository;
 
+import java.util.Optional;
+
 @Service
 @Transactional(readOnly = true)
 public class AddressService {
@@ -17,7 +19,14 @@ public class AddressService {
     }
 
     @Transactional
-    public void save(Address address){
-        addressRepository.save(address);
+    public Optional<Address> save(Address address) {
+        Optional<Address> addressOptional = addressRepository.findByGeo_Id(address.getGeo().getId());
+        if (addressOptional.isEmpty()){
+            addressRepository.save(address);
+            addressOptional = Optional.of(address);
+        }
+
+
+        return addressOptional;
     }
 }

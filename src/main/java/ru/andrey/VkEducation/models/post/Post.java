@@ -1,5 +1,6 @@
 package ru.andrey.VkEducation.models.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -18,12 +19,21 @@ public class Post {
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @JsonIgnore
+    @Column(name="id_vk")
+    private Integer idvk;
     @Column(name="title")
     private String title;
     @Column(name="body")
     private String body;
 
+
+
     @ManyToOne()
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "my_user_id", referencedColumnName = "id")
+    @JsonIgnore
     private User user;
+
+    @Transient
+    private Integer userId;
 }

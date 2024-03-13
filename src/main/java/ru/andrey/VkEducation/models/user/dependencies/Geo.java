@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @Entity
 @Table(name="geo")
 public class Geo {
+    @JsonIgnore
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

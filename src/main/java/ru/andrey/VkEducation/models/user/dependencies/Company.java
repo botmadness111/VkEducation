@@ -16,6 +16,7 @@ import java.util.List;
 @Entity
 @Table(name="company")
 public class Company {
+    @JsonIgnore
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
