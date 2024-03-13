@@ -38,4 +38,11 @@ public class Address {
     @JsonIgnore
     @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
     private List<User> users;
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "street='" + street + '\'' +
+                '}';
+    }
 }

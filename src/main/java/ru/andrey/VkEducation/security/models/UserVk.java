@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.andrey.VkEducation.audit.models.Audit;
+
+import java.util.List;
 
 @Entity
 @Table(name = "security_user_vk")
@@ -27,5 +30,8 @@ public class UserVk {
 
     @Column(name = "role")
     private String role;
+
+    @OneToMany(mappedBy = "userVk")
+    private List<Audit> auditList;
 
 }

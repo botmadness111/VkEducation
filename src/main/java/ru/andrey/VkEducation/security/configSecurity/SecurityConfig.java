@@ -32,10 +32,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(HttpMethod.POST, "/userVk/registration", "/userVk/auth").permitAll()
-//                        .requestMatchers("/api/posts/**").hasAnyAuthority("ROLE_POSTS", "ROLE_ADMIN")
-//                        .requestMatchers("/api/users/**").hasAnyAuthority("ROLE_USERS", "ROLE_ADMIN")
-//                        .requestMatchers("/api/albums/**").hasAnyAuthority("ROLE_ALBUMS", "ROLE_ADMIN")
-//                        .anyRequest().authenticated()
+                        .requestMatchers("/api/posts/**").hasAnyAuthority("ROLE_POSTS", "ROLE_ADMIN")
+                        .requestMatchers("/api/users/**").hasAnyAuthority("ROLE_USERS", "ROLE_ADMIN")
+                        .requestMatchers("/api/albums/**").hasAnyAuthority("ROLE_ALBUMS", "ROLE_ADMIN")
+                        .anyRequest().authenticated()
 
                 )
                 .formLogin(withDefaults())  // перекинет на стандартную странциу регистрации

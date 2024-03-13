@@ -53,4 +53,8 @@ public class UserVkDetails implements UserDetails {
         return true;
     }
 
+    public UserVk getUserVk(){
+        return userVk;
+    }
+
 }
