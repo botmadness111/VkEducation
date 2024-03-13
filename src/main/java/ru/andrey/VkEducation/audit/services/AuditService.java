@@ -18,6 +18,11 @@ public class AuditService {
 
     @Transactional
     public void save(Audit audit){
-        auditRepository.save(audit);
+        try {
+            auditRepository.save(audit);
+        } catch (Error error){
+            return;
+        }
+
     }
 }

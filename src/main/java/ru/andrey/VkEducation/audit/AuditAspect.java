@@ -41,7 +41,10 @@ public class AuditAspect {
         audit.setParams(Arrays.toString(joinPoint.getArgs()));
         audit.setMethod(joinPoint.getSignature().getName());
 
-        auditService.save(audit);
-
+        try {
+            auditService.save(audit);
+        } catch (RuntimeException e){
+            return;
+        }
     }
 }

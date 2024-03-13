@@ -1,0 +1,4 @@
+insert into security_user_vk (username, password, role) values ('user', '$2a$10$TzMJ1wghpbo2PKRfwxFaRuaeBS0CmMoCWLeSstndidOhTVMFLINz.', 'ROLE_USERS');
+insert into security_user_vk (username, password, role) values ('admin', '$2a$10$SZ3VS2pGpQ7TFx45dXR8IuNqNKo9Rglrn9qW0xdDWKNSN2YZeDxU2', 'ROLE_ADMIN');
+insert into security_user_vk (username, password, role) values ('post', '$2a$10$An9ErepcXwqj6PKJ/fyHtOqWrsUobVpiP3kUm9pR/C8s4VQRyI3PK', 'ROLE_POSTS');
+insert into security_user_vk (username, password, role) values ('album', '$2a$10$IGbPmK/Yi.FDesmRkHWkeOT6tbUUFxokp1XJsV5TCDNPL3P4XKbrq', 'ROLE_ALBUMS');
